@@ -1,2 +1,8 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<script>
+	let name = '';
+</script>
+
+<h1>Welcome to PepeVote</h1>
+
+<input bind:value={name} placeholder="enter your name" />
+<p>Hello {name || 'stranger'}!</p>
