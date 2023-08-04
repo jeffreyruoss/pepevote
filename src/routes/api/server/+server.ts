@@ -1,7 +1,9 @@
 import { error, json } from '@sveltejs/kit';
 import pkg from 'bitcore-lib';
+import { DIRECTUS_TOKEN } from "$env/static/private";
+
 const { Message } = pkg;
-const ASSET = 'LLAMAS';
+const ASSET = 'NEWLORDKEK';
 
 interface Asset {
 	asset: string
@@ -25,8 +27,23 @@ export async function POST({ request }) {
 		if (!containsAsset) {
 			throw error(400, `Wallet does not contain ${ASSET}`);
 		}
-		// Make post to Directus
+
+		const directus = await fetch('https://data.rarepepes.com/items/results', {
+			method: 'POST',
+			body: JSON.stringify({ "voter_wallet_id": address, "candidate_id": vote }) ,
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${DIRECTUS_TOKEN}`
+			}
+		})
+		console.log(directus)
+
 	} catch (e: any) {
+		// This is to accommodate the errors passed from the message verification
+		if (e.message) {
+			throw error(400, e.message);
+		}
 		throw error(e.status, e.body.message);
 	}
 
