@@ -3,7 +3,7 @@ import pkg from 'bitcore-lib';
 import { DIRECTUS_TOKEN } from "$env/static/private";
 
 const { Message } = pkg;
-const ASSET = 'NEWLORDKEK';
+const ASSET = 'LLAMAS';
 
 interface Asset {
 	asset: string

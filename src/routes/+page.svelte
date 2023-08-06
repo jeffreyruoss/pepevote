@@ -3,6 +3,10 @@
 	import CopyMessage from '$lib/CopyMessage.svelte';
 	import { onMount } from 'svelte'
 	import Footer from '$lib/Footer.svelte';
+	import lottie from 'lottie-web';
+	let isFormSubmitted = false;
+	let isSubmitLoading = false;
+	let voted;
 	let random = '';
 	// Replace with list of candidates
 	const candidates = [
@@ -12,7 +16,7 @@
 	];
 
 	onMount(async () => {
-    	random = self.crypto.randomUUID();
+		random = self.crypto.randomUUID();
 	});
 
 	let address = '';
@@ -20,13 +24,33 @@
 	let vote = '';
 
 	async function validate() {
+		isSubmitLoading = true;
+		if (!address.trim() || !message.trim() || !vote) {
+        alert('All fields are required. Please ensure you have entered your signature, wallet address, and selected a candidate.');
+        return;
+    }
+		
 		const response = await fetch('/api/server', {
 			method: 'POST',
 			body: JSON.stringify({ address, message, random, vote }),
 			headers: {
 				'content-type': 'application/json'
 			}
-		})
+		});
+
+		if (response.ok) {
+    	isFormSubmitted = true;
+
+			lottie.loadAnimation({
+				container: voted,
+				renderer: 'svg',      
+				loop: false,           
+				autoplay: true,       
+				path: 'src/lib/voted.json'  
+    	});
+		} else {
+				alert('There was an issue submitting your vote. Please try again later.');
+		}
 	}
 </script>
 
@@ -38,40 +62,50 @@
 	<Header/>
 	<main>
 		<article>
-			<CopyMessage random={random}/>
-	
-			<form method="POST" on:submit|preventDefault={validate}>
-				<label>
-						Address
-						<input id="input-address" name="address" type="address" placeholder="Your Wallet Address" bind:value={address}>
-				</label>
-				<label>
-						Signature
-						<input name="message" type="message" placeholder="Your Signature" bind:value={message}>
-				</label>
-	
-			<h2>Candidates</h2>
-			{#each candidates as candidate}
-				<label>
-					<input
-						type="radio"
-						name="vote"
-						value={candidate}
-						bind:group={vote}
-					/>
-					{candidate}
-				</label>
-			{/each}
-				<button type="submit">
-					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>star</title><path d="M12.86,10.44L11,6.06L9.14,10.45L4.39,10.86L8,14L6.92,18.63L11,16.17L15.09,18.63L14,14L17.61,10.86L12.86,10.44M16.59,20.7L11,17.34L5.42,20.7L6.88,14.35L1.96,10.07L8.45,9.5L11,3.5L13.55,9.5L20.04,10.07L15.12,14.34L16.59,20.7Z" /></svg>
-					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>star</title><path d="M12.86,10.44L11,6.06L9.14,10.45L4.39,10.86L8,14L6.92,18.63L11,16.17L15.09,18.63L14,14L17.61,10.86L12.86,10.44M16.59,20.7L11,17.34L5.42,20.7L6.88,14.35L1.96,10.07L8.45,9.5L11,3.5L13.55,9.5L20.04,10.07L15.12,14.34L16.59,20.7Z" /></svg>
-					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>star</title><path d="M12.86,10.44L11,6.06L9.14,10.45L4.39,10.86L8,14L6.92,18.63L11,16.17L15.09,18.63L14,14L17.61,10.86L12.86,10.44M16.59,20.7L11,17.34L5.42,20.7L6.88,14.35L1.96,10.07L8.45,9.5L11,3.5L13.55,9.5L20.04,10.07L15.12,14.34L16.59,20.7Z" /></svg>
-					VOTE
-					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>star</title><path d="M12.86,10.44L11,6.06L9.14,10.45L4.39,10.86L8,14L6.92,18.63L11,16.17L15.09,18.63L14,14L17.61,10.86L12.86,10.44M16.59,20.7L11,17.34L5.42,20.7L6.88,14.35L1.96,10.07L8.45,9.5L11,3.5L13.55,9.5L20.04,10.07L15.12,14.34L16.59,20.7Z" /></svg>
-					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>star</title><path d="M12.86,10.44L11,6.06L9.14,10.45L4.39,10.86L8,14L6.92,18.63L11,16.17L15.09,18.63L14,14L17.61,10.86L12.86,10.44M16.59,20.7L11,17.34L5.42,20.7L6.88,14.35L1.96,10.07L8.45,9.5L11,3.5L13.55,9.5L20.04,10.07L15.12,14.34L16.59,20.7Z" /></svg>
-					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>star</title><path d="M12.86,10.44L11,6.06L9.14,10.45L4.39,10.86L8,14L6.92,18.63L11,16.17L15.09,18.63L14,14L17.61,10.86L12.86,10.44M16.59,20.7L11,17.34L5.42,20.7L6.88,14.35L1.96,10.07L8.45,9.5L11,3.5L13.55,9.5L20.04,10.07L15.12,14.34L16.59,20.7Z" /></svg>
-				</button>
-		</form>
+			{#if !isFormSubmitted}
+				<CopyMessage random={random}/>
+		
+				<form method="POST" on:submit|preventDefault={validate}>
+					<label>
+							Signature
+							<input id="signature" name="message" type="message" placeholder="Your Signature" bind:value={message}>
+					</label>
+					<label>
+							Address
+							<input id="input-address" name="address" type="address" placeholder="Your Wallet Address" bind:value={address}>
+					</label>
+		
+				<h2>Candidates</h2>
+				{#each candidates as candidate}
+					<label>
+						<input
+							type="radio"
+							name="vote"
+							value={candidate}
+							bind:group={vote}
+						/>
+						{candidate}
+					</label>
+				{/each}
+					<button type="submit" class:loading={isSubmitLoading}>
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>star</title><path d="M12.86,10.44L11,6.06L9.14,10.45L4.39,10.86L8,14L6.92,18.63L11,16.17L15.09,18.63L14,14L17.61,10.86L12.86,10.44M16.59,20.7L11,17.34L5.42,20.7L6.88,14.35L1.96,10.07L8.45,9.5L11,3.5L13.55,9.5L20.04,10.07L15.12,14.34L16.59,20.7Z" /></svg>
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>star</title><path d="M12.86,10.44L11,6.06L9.14,10.45L4.39,10.86L8,14L6.92,18.63L11,16.17L15.09,18.63L14,14L17.61,10.86L12.86,10.44M16.59,20.7L11,17.34L5.42,20.7L6.88,14.35L1.96,10.07L8.45,9.5L11,3.5L13.55,9.5L20.04,10.07L15.12,14.34L16.59,20.7Z" /></svg>
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>star</title><path d="M12.86,10.44L11,6.06L9.14,10.45L4.39,10.86L8,14L6.92,18.63L11,16.17L15.09,18.63L14,14L17.61,10.86L12.86,10.44M16.59,20.7L11,17.34L5.42,20.7L6.88,14.35L1.96,10.07L8.45,9.5L11,3.5L13.55,9.5L20.04,10.07L15.12,14.34L16.59,20.7Z" /></svg>
+						VOTE
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>star</title><path d="M12.86,10.44L11,6.06L9.14,10.45L4.39,10.86L8,14L6.92,18.63L11,16.17L15.09,18.63L14,14L17.61,10.86L12.86,10.44M16.59,20.7L11,17.34L5.42,20.7L6.88,14.35L1.96,10.07L8.45,9.5L11,3.5L13.55,9.5L20.04,10.07L15.12,14.34L16.59,20.7Z" /></svg>
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>star</title><path d="M12.86,10.44L11,6.06L9.14,10.45L4.39,10.86L8,14L6.92,18.63L11,16.17L15.09,18.63L14,14L17.61,10.86L12.86,10.44M16.59,20.7L11,17.34L5.42,20.7L6.88,14.35L1.96,10.07L8.45,9.5L11,3.5L13.55,9.5L20.04,10.07L15.12,14.34L16.59,20.7Z" /></svg>
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>star</title><path d="M12.86,10.44L11,6.06L9.14,10.45L4.39,10.86L8,14L6.92,18.63L11,16.17L15.09,18.63L14,14L17.61,10.86L12.86,10.44M16.59,20.7L11,17.34L5.42,20.7L6.88,14.35L1.96,10.07L8.45,9.5L11,3.5L13.55,9.5L20.04,10.07L15.12,14.34L16.59,20.7Z" /></svg>
+					</button>
+				</form>
+			{/if}
+
+			{#if isFormSubmitted}
+				<div class="success-message">
+					Thank you for voting!<br>
+					Your vote has been successfully submitted.
+				</div>
+				<div bind:this={voted}></div>
+			{/if}
 		</article>
 	</main>
 	<Footer/>
@@ -137,8 +171,8 @@
 		fill: #ffffff;
 		opacity: 0.5;
 	}
-	button:hover svg {
-		animation: rotate 3s linear infinite;
+	button.loading svg {
+		animation: rotate 3s linear infinite !important;
 	}
 	@keyframes rotate {
 		100% {
@@ -150,5 +184,12 @@
 	}
 	button:focus {
 		box-shadow: 0 0 7px 5px #00af17;
+	}
+	.success-message {
+		margin-top: 0px;
+		margin-bottom: 15px;
+		color: #ffffffd0;
+		font-size: 1.3em;
+		text-align: center;
 	}
 </style>
