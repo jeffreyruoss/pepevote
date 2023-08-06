@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import Header from '$lib/Header.svelte';
 	import CopyMessage from '$lib/CopyMessage.svelte';
 	import { onMount } from 'svelte'
@@ -12,7 +12,7 @@
 	];
 
 	onMount(async () => {
-		random = self.crypto.randomUUID();
+    	random = self.crypto.randomUUID();
 	});
 
 	let address = '';
@@ -43,7 +43,7 @@
 			<form method="POST" on:submit|preventDefault={validate}>
 				<label>
 						Address
-						<input name="address" type="address" placeholder="Your Wallet Address" bind:value={address}>
+						<input id="input-address" name="address" type="address" placeholder="Your Wallet Address" bind:value={address}>
 				</label>
 				<label>
 						Signature
@@ -62,7 +62,15 @@
 					{candidate}
 				</label>
 			{/each}
-				<button type="submit">VOTE</button>
+				<button type="submit">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>star</title><path d="M12.86,10.44L11,6.06L9.14,10.45L4.39,10.86L8,14L6.92,18.63L11,16.17L15.09,18.63L14,14L17.61,10.86L12.86,10.44M16.59,20.7L11,17.34L5.42,20.7L6.88,14.35L1.96,10.07L8.45,9.5L11,3.5L13.55,9.5L20.04,10.07L15.12,14.34L16.59,20.7Z" /></svg>
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>star</title><path d="M12.86,10.44L11,6.06L9.14,10.45L4.39,10.86L8,14L6.92,18.63L11,16.17L15.09,18.63L14,14L17.61,10.86L12.86,10.44M16.59,20.7L11,17.34L5.42,20.7L6.88,14.35L1.96,10.07L8.45,9.5L11,3.5L13.55,9.5L20.04,10.07L15.12,14.34L16.59,20.7Z" /></svg>
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>star</title><path d="M12.86,10.44L11,6.06L9.14,10.45L4.39,10.86L8,14L6.92,18.63L11,16.17L15.09,18.63L14,14L17.61,10.86L12.86,10.44M16.59,20.7L11,17.34L5.42,20.7L6.88,14.35L1.96,10.07L8.45,9.5L11,3.5L13.55,9.5L20.04,10.07L15.12,14.34L16.59,20.7Z" /></svg>
+					VOTE
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>star</title><path d="M12.86,10.44L11,6.06L9.14,10.45L4.39,10.86L8,14L6.92,18.63L11,16.17L15.09,18.63L14,14L17.61,10.86L12.86,10.44M16.59,20.7L11,17.34L5.42,20.7L6.88,14.35L1.96,10.07L8.45,9.5L11,3.5L13.55,9.5L20.04,10.07L15.12,14.34L16.59,20.7Z" /></svg>
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>star</title><path d="M12.86,10.44L11,6.06L9.14,10.45L4.39,10.86L8,14L6.92,18.63L11,16.17L15.09,18.63L14,14L17.61,10.86L12.86,10.44M16.59,20.7L11,17.34L5.42,20.7L6.88,14.35L1.96,10.07L8.45,9.5L11,3.5L13.55,9.5L20.04,10.07L15.12,14.34L16.59,20.7Z" /></svg>
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>star</title><path d="M12.86,10.44L11,6.06L9.14,10.45L4.39,10.86L8,14L6.92,18.63L11,16.17L15.09,18.63L14,14L17.61,10.86L12.86,10.44M16.59,20.7L11,17.34L5.42,20.7L6.88,14.35L1.96,10.07L8.45,9.5L11,3.5L13.55,9.5L20.04,10.07L15.12,14.34L16.59,20.7Z" /></svg>
+				</button>
 		</form>
 		</article>
 	</main>
@@ -82,6 +90,8 @@
 	main {
 		padding-left: 15px;
 		padding-right: 15px;
+		display: flex;
+		align-items: center;
 	}
 	article {
 		margin-left: auto;
@@ -92,12 +102,17 @@
 		max-width: 600px;
 	}
 	input {
-		border-color: #00e33d;
+		border: 2px solid #00a228;
 		background-color: #ffffffcf;
-		color: #8A0A53;
+		color: #454545;
+		transition: box-shadow 0.2s ease-in-out;
 	}
 	input::placeholder {
-		color: #4b784eb6;
+		color: #919191;
+	}
+	input[type=radio] {
+		border-color: #8401B0;
+		border-color: #00a228;
 	}
 	h2 {
 		margin-top: 15px;
@@ -106,10 +121,34 @@
 		font-size: 1.6em;
 		font-weight: 500;
 	}
-	button[type=submit] {
+	button {
 		margin-top: 30px;
-		background-color: #8a0b53;
-		border-color: #ff0090;
+		background-color: #8400af;
+		border-color: #bf00ff;
 		font-size: 1.3em;
+		display: flex;
+		align-items: center;
+		justify-content: space-evenly;
+	}
+	button svg {
+		padding: 0 0 3px 2px;
+		width: 30px;
+		height: 30px;
+		fill: #ffffff;
+		opacity: 0.5;
+	}
+	button:hover svg {
+		animation: rotate 3s linear infinite;
+	}
+	@keyframes rotate {
+		100% {
+			transform: rotate(360deg);
+		}
+	}
+	button:hover {
+		background-color: #bf00ff;
+	}
+	button:focus {
+		box-shadow: 0 0 7px 5px #00af17;
 	}
 </style>
