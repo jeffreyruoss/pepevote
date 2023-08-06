@@ -42,12 +42,12 @@
 	
 			<form method="POST" on:submit|preventDefault={validate}>
 				<label>
-						Address
-						<input id="input-address" name="address" type="address" placeholder="Your Wallet Address" bind:value={address}>
+						Signature
+						<input id="signature" name="message" type="message" placeholder="Your Signature" bind:value={message}>
 				</label>
 				<label>
-						Signature
-						<input name="message" type="message" placeholder="Your Signature" bind:value={message}>
+						Address
+						<input id="input-address" name="address" type="address" placeholder="Your Wallet Address" bind:value={address}>
 				</label>
 	
 			<h2>Candidates</h2>
