@@ -20,6 +20,11 @@
 	let vote = '';
 
 	async function validate() {
+		if (!address.trim() || !message.trim() || !vote) {
+        alert('All fields are required. Please ensure you have entered your signature, wallet address, and selected a candidate.');
+        return;
+    }
+		
 		const response = await fetch('/api/server', {
 			method: 'POST',
 			body: JSON.stringify({ address, message, random, vote }),
