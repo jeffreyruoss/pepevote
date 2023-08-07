@@ -1,12 +1,13 @@
 <script lang="ts">
 	import Header from '$lib/Header.svelte';
 	import CopyMessage from '$lib/CopyMessage.svelte';
-	import { onMount } from 'svelte'
+	import { onMount, tick } from 'svelte'
 	import Footer from '$lib/Footer.svelte';
 	import lottie from 'lottie-web';
 	let isFormSubmitted = false;
 	let isSubmitLoading = false;
 	let voted;
+	let lottieLoaded = false;
 	let random = '';
 	// Replace with list of candidates
 	const candidates = [
@@ -41,17 +42,23 @@
 		if (response.ok) {
     	isFormSubmitted = true;
 
-			lottie.loadAnimation({
-				container: voted,
-				renderer: 'svg',      
-				loop: false,           
-				autoplay: true,       
-				path: 'src/lib/voted.json'  
-    	});
+			await tick();
+
+			if (!lottieLoaded) {
+				lottie.loadAnimation({
+					container: voted,
+					renderer: 'svg',
+					loop: false,
+					autoplay: true,
+					path: 'src/lib/voted.json'
+				});
+				lottieLoaded = true;
+			}
 		} else {
 				alert('There was an issue submitting your vote. Please try again later.');
 		}
 	}
+
 </script>
 
 <svelte:head>
