@@ -1,4 +1,5 @@
 <script lang="ts">
+	import '$lib/global.css';
 	import Header from '$lib/Header.svelte';
 	import CopyMessage from '$lib/CopyMessage.svelte';
 	import { onMount, tick } from 'svelte'
