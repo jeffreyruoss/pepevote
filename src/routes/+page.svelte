@@ -4,11 +4,11 @@
 	import CopyMessage from '$lib/CopyMessage.svelte';
 	import { onMount, tick } from 'svelte'
 	import Footer from '$lib/Footer.svelte';
-	import lottie from 'lottie-web';
+	import VotedLottie from '$lib/VotedLottie.svelte';
+	import SuccessMessage from '$lib/SuccessMessage.svelte';
 	let isFormSubmitted = false;
 	let isSubmitLoading = false;
-	let voted;
-	let lottieLoaded = false;
+	let showMessage = false;
 	let random = '';
 	// Replace with list of candidates
 	const candidates = [
@@ -24,6 +24,10 @@
 	let address = '';
 	let message = '';
 	let vote = '';
+
+	function handleAnimationComplete() {
+        showMessage = true;
+    }
 
 	async function validate() {
 		isSubmitLoading = true;
@@ -42,24 +46,10 @@
 
 		if (response.ok) {
     	isFormSubmitted = true;
-
-			await tick();
-
-			if (!lottieLoaded) {
-				lottie.loadAnimation({
-					container: voted,
-					renderer: 'svg',
-					loop: false,
-					autoplay: true,
-					path: 'src/lib/voted.json'
-				});
-				lottieLoaded = true;
-			}
 		} else {
 				alert('There was an issue submitting your vote. Please try again later.');
 		}
 	}
-
 </script>
 
 <svelte:head>
@@ -108,11 +98,8 @@
 			{/if}
 
 			{#if isFormSubmitted}
-				<div class="success-message">
-					Thank you for voting!<br>
-					Your vote has been successfully submitted.
-				</div>
-				<div bind:this={voted}></div>
+				<VotedLottie on:votedLottieComplete={handleAnimationComplete} />
+				<SuccessMessage show={showMessage} />
 			{/if}
 		</article>
 	</main>
