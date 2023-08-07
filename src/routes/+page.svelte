@@ -7,6 +7,7 @@
 	let isFormSubmitted = false;
 	let isSubmitLoading = false;
 	let voted;
+	let lottieLoaded = false;
 	let random = '';
 	// Replace with list of candidates
 	const candidates = [
@@ -40,18 +41,26 @@
 
 		if (response.ok) {
     	isFormSubmitted = true;
-
-			lottie.loadAnimation({
-				container: voted,
-				renderer: 'svg',      
-				loop: false,           
-				autoplay: true,       
-				path: 'src/lib/voted.json'  
-    	});
 		} else {
 				alert('There was an issue submitting your vote. Please try again later.');
 		}
 	}
+
+	$: if (isFormSubmitted) {
+    setTimeout(() => {
+			if (!lottieLoaded) {
+				lottie.loadAnimation({
+					container: voted,
+					renderer: 'svg',
+					loop: false,
+					autoplay: true,
+					path: 'src/lib/voted.json'
+				});
+				lottieLoaded = true;
+			}
+    }, 500);
+	}
+
 </script>
 
 <svelte:head>
