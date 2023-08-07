@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Header from '$lib/Header.svelte';
 	import CopyMessage from '$lib/CopyMessage.svelte';
-	import { onMount } from 'svelte'
+	import { onMount, tick } from 'svelte'
 	import Footer from '$lib/Footer.svelte';
 	import lottie from 'lottie-web';
 	let isFormSubmitted = false;
@@ -41,13 +41,9 @@
 
 		if (response.ok) {
     	isFormSubmitted = true;
-		} else {
-				alert('There was an issue submitting your vote. Please try again later.');
-		}
-	}
 
-	$: if (isFormSubmitted) {
-    setTimeout(() => {
+			await tick();
+
 			if (!lottieLoaded) {
 				lottie.loadAnimation({
 					container: voted,
@@ -58,7 +54,9 @@
 				});
 				lottieLoaded = true;
 			}
-    }, 500);
+		} else {
+				alert('There was an issue submitting your vote. Please try again later.');
+		}
 	}
 
 </script>
