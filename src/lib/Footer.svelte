@@ -4,7 +4,7 @@
 
 <footer>
 	<div class="container">
-		<a href="https://pepe.co">pepe.co</a>
+		<a href="https://pepe.co/vote" target="_blank">pepe.co/vote</a>
 	</div>
 </footer>
 
@@ -15,8 +15,9 @@
 		background-color: rgba(0, 0, 0, 0.8);
 		text-align: center;
 		& a {
-			font-size: 1.3em;
-			color: #23C94E;
+			font-size: 1.2em;
+			color: #159437;
+			text-decoration: underline;
 		}
 	}
 </style>
