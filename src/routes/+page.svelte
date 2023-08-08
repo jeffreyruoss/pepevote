@@ -30,25 +30,31 @@
     }
 
 	async function validate() {
-		isSubmitLoading = true;
-		if (!address.trim() || !message.trim() || !vote) {
-        alert('All fields are required. Please ensure you have entered your signature, wallet address, and selected a candidate.');
-        return;
-    }
-		
-		const response = await fetch('/api/server', {
-			method: 'POST',
-			body: JSON.stringify({ address, message, random, vote }),
-			headers: {
-				'content-type': 'application/json'
-			}
-		});
 
-		if (response.ok) {
-    	isFormSubmitted = true;
-		} else {
-				alert('There was an issue submitting your vote. Please try again later.');
-		}
+		const candidates = await fetch('/api/server');
+		const { data } = await candidates.json();
+		console.log(data)
+	// 	isSubmitLoading = true;
+	// 	if (!address.trim() || !message.trim()) {
+    //     alert('All fields are required. Please ensure you have entered your signature, wallet address, and selected a candidate.');
+    //     return;
+    // }
+		
+	// 	const response = await fetch('/api/server', {
+	// 		method: 'POST',
+	// 		body: JSON.stringify({ address, message, random }),
+	// 		headers: {
+	// 			'content-type': 'application/json'
+	// 		}
+	// 	});
+
+	// 	if (response.ok) {
+    // 	isFormSubmitted = true;
+
+	// 	console.log(candidates);
+	// 	} else {
+	// 			alert('There was an issue submitting your vote. Please try again later.');
+	// 	}
 	}
 </script>
 
