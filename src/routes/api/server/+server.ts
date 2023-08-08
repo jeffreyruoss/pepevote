@@ -2,7 +2,6 @@ import { error, json } from '@sveltejs/kit';
 import pkg from 'bitcore-lib';
 import { DIRECTUS_TOKEN, JWT_SECRET } from "$env/static/private";
 import jwt from 'jsonwebtoken';
-import https from 'https';
 
 const { Message } = pkg;
 const ASSET = 'LLAMAS';
@@ -53,7 +52,7 @@ export async function POST({ cookies, request }) {
 }
 
 /** @type {import('./$types').RequestHandler} */
-export async function GET({ cookies, request }) {
+export async function GET({ cookies }) {
 	try {
 		const token: string | undefined = cookies.get('token');
 
@@ -61,18 +60,19 @@ export async function GET({ cookies, request }) {
 			throw error(400, 'No token available');
 		}
 
-		const decoded = jwt.verify(token, JWT_SECRET);
+		const decoded: any = jwt.verify(token, JWT_SECRET);
 
-		// if (decoded.assets.includes(ASSET))
-		const response = await fetch('https://data.rarepepes.com/items/candidates', {
+		if (!decoded.assets.includes(ASSET)) {
+			throw error(400, 'Wallet doesnt contain asset')
+		}
+
+		return await fetch('https://data.rarepepes.com/items/candidates', {
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json',
 				'Authorization': `Bearer ${DIRECTUS_TOKEN}`
 			}
 		})
-		const { data } = await response.json();
-		return new Response(data)
 	} catch (e: any) {
 		if (e.message) {
 			throw error(400, e.message);
