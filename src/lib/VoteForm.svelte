@@ -1,5 +1,6 @@
 <script>
 	import { candidatesStore } from '$lib/stores.ts';
+	import { isFormSubmittedStore } from '$lib/stores.ts';
 	import { get } from 'svelte/store';
 
 	async function submitVote() {
@@ -12,6 +13,9 @@
 				'Content-Type': 'application/json',
 			}
 		})
+		if (response.ok) {
+			isFormSubmittedStore.set(true);
+		}
 	}
 </script>
 

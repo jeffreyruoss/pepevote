@@ -8,7 +8,7 @@
 	import SuccessMessage from '$lib/SuccessMessage.svelte';
 	import Candidates from '$lib/Candidates.svelte';
 	import VoteForm from '$lib/VoteForm.svelte';
-	let isFormSubmitted = false;
+	import { isFormSubmittedStore } from '$lib/stores.ts';
 	let isSubmitLoading = false;
 	let showMessage = false;
 	let isValidated = false;
@@ -60,7 +60,7 @@
 	<Header/>
 	<main>
 		<article>
-			{#if !isFormSubmitted}
+			{#if !$isFormSubmittedStore && !isValidated}
 				<CopyMessage random={random}/>
 		
 				<form method="POST" on:submit|preventDefault={validate}>
@@ -83,8 +83,9 @@
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>star</title><path d="M12.86,10.44L11,6.06L9.14,10.45L4.39,10.86L8,14L6.92,18.63L11,16.17L15.09,18.63L14,14L17.61,10.86L12.86,10.44M16.59,20.7L11,17.34L5.42,20.7L6.88,14.35L1.96,10.07L8.45,9.5L11,3.5L13.55,9.5L20.04,10.07L15.12,14.34L16.59,20.7Z" /></svg>
 					</button>
 				</form>
+			{/if}
 
-				{#if isValidated}
+			{#if isValidated && !$isFormSubmittedStore}
 					<VoteForm>
 						<h2>Candidates</h2>
 						<Candidates/>
@@ -99,9 +100,8 @@
 						</button>
 					</VoteForm>
 				{/if}
-			{/if}
 
-			{#if isFormSubmitted}
+			{#if $isFormSubmittedStore}
 				<VotedLottie on:votedLottieComplete={handleAnimationComplete} />
 				<SuccessMessage show={showMessage} />
 			{/if}
