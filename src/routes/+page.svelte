@@ -1,6 +1,7 @@
 <script lang="ts">
 	import '$lib/global.css';
 	import Header from '$lib/Header.svelte';
+	import HowToVote from '$lib/HowToVote.svelte';
 	import CopyMessage from '$lib/CopyMessage.svelte';
 	import { onMount, tick } from 'svelte'
 	import Footer from '$lib/Footer.svelte';
@@ -60,6 +61,7 @@
 	<Header/>
 	<main>
 		<article>
+			<HowToVote/>
 			{#if !$isFormSubmittedStore && !isValidated}
 				<CopyMessage random={random}/>
 		
