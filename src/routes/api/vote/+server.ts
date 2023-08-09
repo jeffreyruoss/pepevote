@@ -1,5 +1,5 @@
 import { error, json } from '@sveltejs/kit';
-import { DIRECTUS_TOKEN, JWT_SECRET } from "$env/static/private";
+import { DIRECTUS_TOKEN, JWT_SECRET, ASSET } from "$env/static/private";
 import jwt from 'jsonwebtoken';
 
 /** @type {import('./$types').RequestHandler} */
@@ -13,7 +13,11 @@ export async function POST({ cookies, request }) {
 			throw error(400, 'No token available');
 		}
 
-		const decoded = jwt.verify(token, JWT_SECRET);
+		const decoded: any = jwt.verify(token, JWT_SECRET);
+
+		if (!decoded.assets.includes(ASSET)) {
+			throw error(400, 'Wallet doesnt contain asset')
+		}
 
 		const directus = await fetch('https://data.rarepepes.com/items/results', {
 			method: 'POST',

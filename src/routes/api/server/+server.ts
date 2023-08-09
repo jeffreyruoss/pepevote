@@ -1,10 +1,9 @@
 import { error, json } from '@sveltejs/kit';
 import pkg from 'bitcore-lib';
-import { DIRECTUS_TOKEN, JWT_SECRET } from "$env/static/private";
+import { DIRECTUS_TOKEN, JWT_SECRET, ASSET } from "$env/static/private";
 import jwt from 'jsonwebtoken';
 
 const { Message } = pkg;
-const ASSET = 'LLAMAS';
 
 interface Asset {
 	asset: string
