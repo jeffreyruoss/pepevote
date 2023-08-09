@@ -7,6 +7,7 @@
 	import VotedLottie from '$lib/VotedLottie.svelte';
 	import SuccessMessage from '$lib/SuccessMessage.svelte';
 	import Candidates from '$lib/Candidates.svelte';
+	import VoteForm from '$lib/VoteForm.svelte';
 	let isFormSubmitted = false;
 	let isSubmitLoading = false;
 	let showMessage = false;
@@ -27,26 +28,27 @@
 
 	async function validate() {
 		isSubmitLoading = true;
-		if (!address.trim() || !message.trim()) {
-        alert('All fields are required. Please ensure you have entered your signature, wallet address, and selected a candidate.');
-        return;
-    }
+		isValidated = true;
+	// 	if (!address.trim() || !message.trim()) {
+    //     alert('All fields are required. Please ensure you have entered your signature, wallet address, and selected a candidate.');
+    //     return;
+    // }
 		
-		const response = await fetch('/api/server', {
-			method: 'POST',
-			body: JSON.stringify({ address, message, random }),
-			headers: {
-				'content-type': 'application/json'
-			}
-		});
+	// 	const response = await fetch('/api/server', {
+	// 		method: 'POST',
+	// 		body: JSON.stringify({ address, message, random }),
+	// 		headers: {
+	// 			'content-type': 'application/json'
+	// 		}
+	// 	});
 
-		if (response.ok) {
-    	isFormSubmitted = true;
-			isValidated = true;
+	// 	if (response.ok) {
+    // 		// isFormSubmitted = true;
+	// 		isValidated = true;
 
-		} else {
-				alert('There was an issue submitting your vote. Please try again later.');
-		}
+	// 	} else {
+	// 			alert('There was an issue submitting your vote. Please try again later.');
+	// 	}
 	}
 </script>
 
@@ -70,22 +72,33 @@
 							Address
 							<input id="input-address" name="address" type="address" placeholder="Your Wallet Address" bind:value={address}>
 					</label>
-		
-					{#if isValidated}
-						<h2>Candidates</h2>
-						<Candidates/>
-					{/if}
 
 					<button type="submit" class:loading={isSubmitLoading}>
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>star</title><path d="M12.86,10.44L11,6.06L9.14,10.45L4.39,10.86L8,14L6.92,18.63L11,16.17L15.09,18.63L14,14L17.61,10.86L12.86,10.44M16.59,20.7L11,17.34L5.42,20.7L6.88,14.35L1.96,10.07L8.45,9.5L11,3.5L13.55,9.5L20.04,10.07L15.12,14.34L16.59,20.7Z" /></svg>
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>star</title><path d="M12.86,10.44L11,6.06L9.14,10.45L4.39,10.86L8,14L6.92,18.63L11,16.17L15.09,18.63L14,14L17.61,10.86L12.86,10.44M16.59,20.7L11,17.34L5.42,20.7L6.88,14.35L1.96,10.07L8.45,9.5L11,3.5L13.55,9.5L20.04,10.07L15.12,14.34L16.59,20.7Z" /></svg>
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>star</title><path d="M12.86,10.44L11,6.06L9.14,10.45L4.39,10.86L8,14L6.92,18.63L11,16.17L15.09,18.63L14,14L17.61,10.86L12.86,10.44M16.59,20.7L11,17.34L5.42,20.7L6.88,14.35L1.96,10.07L8.45,9.5L11,3.5L13.55,9.5L20.04,10.07L15.12,14.34L16.59,20.7Z" /></svg>
-						VOTE
+						VALIDATE
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>star</title><path d="M12.86,10.44L11,6.06L9.14,10.45L4.39,10.86L8,14L6.92,18.63L11,16.17L15.09,18.63L14,14L17.61,10.86L12.86,10.44M16.59,20.7L11,17.34L5.42,20.7L6.88,14.35L1.96,10.07L8.45,9.5L11,3.5L13.55,9.5L20.04,10.07L15.12,14.34L16.59,20.7Z" /></svg>
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>star</title><path d="M12.86,10.44L11,6.06L9.14,10.45L4.39,10.86L8,14L6.92,18.63L11,16.17L15.09,18.63L14,14L17.61,10.86L12.86,10.44M16.59,20.7L11,17.34L5.42,20.7L6.88,14.35L1.96,10.07L8.45,9.5L11,3.5L13.55,9.5L20.04,10.07L15.12,14.34L16.59,20.7Z" /></svg>
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>star</title><path d="M12.86,10.44L11,6.06L9.14,10.45L4.39,10.86L8,14L6.92,18.63L11,16.17L15.09,18.63L14,14L17.61,10.86L12.86,10.44M16.59,20.7L11,17.34L5.42,20.7L6.88,14.35L1.96,10.07L8.45,9.5L11,3.5L13.55,9.5L20.04,10.07L15.12,14.34L16.59,20.7Z" /></svg>
 					</button>
 				</form>
+
+				{#if isValidated}
+					<VoteForm>
+						<h2>Candidates</h2>
+						<Candidates/>
+						<button type="submit" class:loading={isSubmitLoading}>
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>star</title><path d="M12.86,10.44L11,6.06L9.14,10.45L4.39,10.86L8,14L6.92,18.63L11,16.17L15.09,18.63L14,14L17.61,10.86L12.86,10.44M16.59,20.7L11,17.34L5.42,20.7L6.88,14.35L1.96,10.07L8.45,9.5L11,3.5L13.55,9.5L20.04,10.07L15.12,14.34L16.59,20.7Z" /></svg>
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>star</title><path d="M12.86,10.44L11,6.06L9.14,10.45L4.39,10.86L8,14L6.92,18.63L11,16.17L15.09,18.63L14,14L17.61,10.86L12.86,10.44M16.59,20.7L11,17.34L5.42,20.7L6.88,14.35L1.96,10.07L8.45,9.5L11,3.5L13.55,9.5L20.04,10.07L15.12,14.34L16.59,20.7Z" /></svg>
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>star</title><path d="M12.86,10.44L11,6.06L9.14,10.45L4.39,10.86L8,14L6.92,18.63L11,16.17L15.09,18.63L14,14L17.61,10.86L12.86,10.44M16.59,20.7L11,17.34L5.42,20.7L6.88,14.35L1.96,10.07L8.45,9.5L11,3.5L13.55,9.5L20.04,10.07L15.12,14.34L16.59,20.7Z" /></svg>
+							VOTE
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>star</title><path d="M12.86,10.44L11,6.06L9.14,10.45L4.39,10.86L8,14L6.92,18.63L11,16.17L15.09,18.63L14,14L17.61,10.86L12.86,10.44M16.59,20.7L11,17.34L5.42,20.7L6.88,14.35L1.96,10.07L8.45,9.5L11,3.5L13.55,9.5L20.04,10.07L15.12,14.34L16.59,20.7Z" /></svg>
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>star</title><path d="M12.86,10.44L11,6.06L9.14,10.45L4.39,10.86L8,14L6.92,18.63L11,16.17L15.09,18.63L14,14L17.61,10.86L12.86,10.44M16.59,20.7L11,17.34L5.42,20.7L6.88,14.35L1.96,10.07L8.45,9.5L11,3.5L13.55,9.5L20.04,10.07L15.12,14.34L16.59,20.7Z" /></svg>
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>star</title><path d="M12.86,10.44L11,6.06L9.14,10.45L4.39,10.86L8,14L6.92,18.63L11,16.17L15.09,18.63L14,14L17.61,10.86L12.86,10.44M16.59,20.7L11,17.34L5.42,20.7L6.88,14.35L1.96,10.07L8.45,9.5L11,3.5L13.55,9.5L20.04,10.07L15.12,14.34L16.59,20.7Z" /></svg>
+						</button>
+					</VoteForm>
+				{/if}
 			{/if}
 
 			{#if isFormSubmitted}

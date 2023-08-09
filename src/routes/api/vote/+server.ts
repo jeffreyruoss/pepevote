@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 /** @type {import('./$types').RequestHandler} */
 export async function POST({ cookies, request }) {
 	try {
-		const { address, vote } = await request.json();
+		const { votes } = await request.json();
 
 		const token: string | undefined = cookies.get('token');
 
@@ -21,7 +21,7 @@ export async function POST({ cookies, request }) {
 
 		const directus = await fetch('https://data.rarepepes.com/items/results', {
 			method: 'POST',
-			body: JSON.stringify({ "voter_wallet_id": address, "candidate_id": vote }) ,
+			body: JSON.stringify({ "voter_wallet_id": decoded.address, "voter_response": JSON.stringify(votes) }),
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json',

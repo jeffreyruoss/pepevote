@@ -1,11 +1,19 @@
-<script>
+<script lang="ts">
 	import { onMount } from 'svelte';
 	import { candidatesStore } from '$lib/stores.ts';
 
 	async function getCandidates() { 
-		const candidates = await fetch('/api/server');
-		const { data } = await candidates.json();
-		candidatesStore.set(data);
+		const response = await fetch('/api/server');
+		const { data } = await response.json();
+		const candidates = data.map((candidate) => {
+			const { id, name } = candidate;
+			return {
+				id,
+				name,
+				hasVote: false
+			}
+		})
+		candidatesStore.set(candidates);
 	}
 
 	onMount(async () => {
@@ -13,10 +21,10 @@
 	});
 </script>
 
-{#each $candidatesStore as candidate}
+{#each $candidatesStore as $candidate}
 	<label>
-		<input type="checkbox" value="true" data-id={candidate.id} checked />
-		{candidate.name}
+		<input type="checkbox" bind:checked={$candidate.hasVote} />
+		{$candidate.name}
 	</label>
 {/each}
 
