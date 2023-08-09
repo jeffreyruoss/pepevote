@@ -31,9 +31,5 @@ export function validateAddress(address: string): string {
 		address = address.replace(/address\s?(:)?\s?/gi, '');
 	}
 	addressField.value = address;
-	if (address.length !== 34) {
-		console.log('address length is not 34');
-		return `This doesn't seem to be a valid wallet address.`;
-	}
 	return '';
 }
