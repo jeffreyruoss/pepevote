@@ -61,14 +61,16 @@
 	<Header/>
 	<main>
 		<article>
-			<HowToVote/>
+			{#if !$isFormSubmittedStore}
+				<HowToVote/>
+			{/if}
 			{#if !$isFormSubmittedStore && !isValidated}
 				<CopyMessage random={random}/>
 		
 				<form method="POST" on:submit|preventDefault={validate}>
 					<label>
 							Signature
-							<input id="signature" name="message" type="message" placeholder="Your Signature" bind:value={message} on:blur={() => validationError.message = validateMessage(message)}>
+							<textarea id="signature" name="message" type="message" placeholder="Your Signature" bind:value={message} on:blur={() => validationError.message = validateMessage(message)}></textarea>
 							{#if validationError.message}
 								<div class="tooltip">
 									{validationError.message}
@@ -142,7 +144,8 @@
 		width: 100%;
 		max-width: 550px;
 	}
-	input {
+	input,
+	textarea {
 		border: 2px solid #00a228;
 		background-color: #ffffffcf;
 		color: #454545;
@@ -150,6 +153,9 @@
 	}
 	input::placeholder {
 		color: #919191;
+	}
+	textarea {
+		height: 200px;
 	}
 	h2 {
 		margin-top: 15px;

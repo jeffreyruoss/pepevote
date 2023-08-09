@@ -15,7 +15,7 @@ export function validateMessage(message: string): string {
 	signatureField.value = message;
 	if (message.length !== 88) {
 		console.log('Signature length is not 88');
-		return `This doesnt' seem to be a valid signature.`;
+		return `This doesn't seem to be a valid signature.`;
 	}
 	return '';
 }
@@ -33,8 +33,7 @@ export function validateAddress(address: string): string {
 	addressField.value = address;
 	if (address.length !== 34) {
 		console.log('address length is not 34');
-		return `This doesn's seem to be a valid wallet address.`;
+		return `This doesn't seem to be a valid wallet address.`;
 	}
 	return '';
 }
-
