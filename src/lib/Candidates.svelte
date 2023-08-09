@@ -3,9 +3,10 @@
 	import { candidatesStore } from '$lib/stores.ts';
 
 	async function getCandidates() { 
-		const response = await fetch('/api/server');
-		const { data } = await response.json();
-		const candidates = data.map((candidate) => {
+		try {
+			const response = await fetch('/api/server');
+			const { data } = await response.json();
+			const candidates = data.map((candidate) => {
 			const { id, name } = candidate;
 			return {
 				id,
@@ -14,6 +15,9 @@
 			}
 		})
 		candidatesStore.set(candidates);
+		} catch (error) {
+			console.log(error);
+		}
 	}
 
 	onMount(async () => {
