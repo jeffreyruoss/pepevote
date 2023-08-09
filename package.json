@@ -32,6 +32,7 @@
 	"type": "module",
 	"dependencies": {
 		"bitcore-lib": "^10.0.5",
+		"jsonwebtoken": "^9.0.1",
 		"lottie-web": "^5.12.2"
 	}
 }
