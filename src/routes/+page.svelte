@@ -10,9 +10,12 @@
 	import VoteForm from '$lib/VoteForm.svelte';
 	import { isFormSubmitLoadingStore, isFormSubmittedStore } from '$lib/stores.ts';
 	import ValidationSuccess from '$lib/ValidationSuccess.svelte';
+	import { validateAddress, validateMessage } from '$lib/formValidation';
+
 	let showMessage = false;
 	let isValidated = false;
 	let random = '';
+	let validationError = { address: '', message: '', vote: '' };
 
 	onMount(async () => {
 		random = self.crypto.randomUUID();
@@ -27,8 +30,8 @@
     }
 
 	async function validate() {
-		if (!address.trim() || !message.trim()) {
-        alert('All fields are required. Please ensure you have entered your signature, wallet address, and selected a candidate.');
+		if (validationError.address || validationError.message || validationError.vote) {	
+			console.log('validation error');
         return;
     }
 		
@@ -63,11 +66,21 @@
 				<form method="POST" on:submit|preventDefault={validate}>
 					<label>
 							Signature
-							<input id="signature" name="message" type="message" placeholder="Your Signature" bind:value={message}>
+							<input id="signature" name="message" type="message" placeholder="Your Signature" bind:value={message} on:blur={() => validationError.message = validateMessage(message)}>
+							{#if validationError.message}
+								<div class="tooltip">
+									{validationError.message}
+								</div>
+							{/if}
 					</label>
 					<label>
 							Address
-							<input id="input-address" name="address" type="address" placeholder="Your Wallet Address" bind:value={address}>
+							<input id="input-address" name="address" type="address" placeholder="Your Wallet Address" bind:value={address} on:blur={() => validationError.address = validateAddress(address)}>
+							{#if validationError.address}
+								<div class="tooltip">
+									{validationError.address}
+								</div>
+							{/if}
 					</label>
 
 					<button type="submit" class="validate-button">
@@ -124,7 +137,8 @@
 		border-radius: 30px;
 		padding: 30px 30px 15px 30px;
 		background-color: rgba(0, 0, 0, 0.85);
-		max-width: 600px;
+		width: 100%;
+		max-width: 550px;
 	}
 	input {
 		border: 2px solid #00a228;
@@ -186,5 +200,12 @@
 	}
 	button:focus {
 		box-shadow: 0 0 7px 5px #00af17;
+	}
+	.tooltip {
+		margin-bottom: 30px;
+		background-color: #f4433689;
+		color: white;
+		padding: 5px 10px;
+		border-radius: 4px;
 	}
 </style>
