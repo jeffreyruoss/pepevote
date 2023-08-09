@@ -11,7 +11,7 @@
 			return {
 				id,
 				name,
-				hasVote: false
+				hasVote: true
 			}
 		})
 		candidatesStore.set(candidates);
