@@ -149,10 +149,6 @@
 	input::placeholder {
 		color: #919191;
 	}
-	input[type=radio] {
-		border-color: #8401B0;
-		border-color: #00a228;
-	}
 	h2 {
 		margin-top: 15px;
 		margin-bottom: 5px;
