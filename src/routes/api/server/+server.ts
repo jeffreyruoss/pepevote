@@ -18,8 +18,8 @@ export async function POST({ cookies, request }) {
 		const verified = new Message(random).verify(address, message);
 
 		if (!verified) {
-			Sentry.captureException('Wallet could not be validated');
-			throw error(400, 'Wallet could not be validated');
+			Sentry.captureException(`Address:${address} could not be validated`);
+			throw error(400, `Address:${address} could not be validated`);
 		}
 
 		const response: any = await fetch(`https://xchain.io/api/balances/${address}`);
