@@ -62,9 +62,13 @@
 
 <div class="wrap">
 	<Header/>
-	{#if !cookiesEnabled}
-		<CookieBar/>
-	{/if}
+
+	<div class="grid-row">
+		{#if !cookiesEnabled}
+			<CookieBar/>
+		{/if}
+	</div>
+
 	<main>
 		<article>
 			{#if !$isFormSubmittedStore}

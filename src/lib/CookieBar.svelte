@@ -2,9 +2,7 @@
 </script>
 
 <div class="cookie-warning">
-	<div>
-		🍪 We use cookies only to keep you signed in. Please enable them for a seamless experience.
-	</div>
+	🍪 We use cookies only to keep you signed in. Please enable them for a seamless experience.
 </div>
 
 <style>
