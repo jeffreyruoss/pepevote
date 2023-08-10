@@ -6,7 +6,7 @@ export default defineConfig({
 	plugins: [sentrySvelteKit({
         sourceMapsUploadOptions: {
             org: "jeff-ruoss-development",
-            project: "javascript-sveltekit"
+            project: "pepe-vote"
         }
     }), sveltekit()],
 	test: {
