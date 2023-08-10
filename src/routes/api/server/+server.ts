@@ -33,7 +33,7 @@ export async function POST({ cookies, request }) {
 			throw error(401, `Wallet does not contain ${ASSET1} or ${ASSET2}`);
 		}
 
-		const assets = data.map((asset: Asset) => asset.asset)
+		const assets = [ASSET1, ASSET2];
 
 		const token = jwt.sign({ address, assets }, JWT_SECRET);
 
