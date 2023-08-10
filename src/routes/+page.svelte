@@ -12,13 +12,16 @@
 	import { isFormSubmitLoadingStore, isFormSubmittedStore } from '$lib/stores.ts';
 	import ValidationSuccess from '$lib/ValidationSuccess.svelte';
 	import { validateAddress, validateMessage } from '$lib/formValidation';
+	import CookieBar from '$lib/CookieBar.svelte';
 
+	let cookiesEnabled = true;
 	let showMessage = false;
 	let isValidated = false;
 	let random = '';
 	let validationError = { address: '', message: '', vote: '' };
 
 	onMount(async () => {
+		cookiesEnabled = navigator.cookieEnabled;
 		random = self.crypto.randomUUID();
 	});
 
@@ -27,8 +30,8 @@
 	let vote = '';
 
 	function handleAnimationComplete() {
-        showMessage = true;
-    }
+			showMessage = true;
+		}
 
 	async function validate() {
 		if (validationError.address || validationError.message || validationError.vote) {	
@@ -59,6 +62,13 @@
 
 <div class="wrap">
 	<Header/>
+
+	<div class="grid-row">
+		{#if !cookiesEnabled}
+			<CookieBar/>
+		{/if}
+	</div>
+
 	<main>
 		<article>
 			{#if !$isFormSubmittedStore}
@@ -127,7 +137,7 @@
 		background-position: center;
 		min-height: 100vh;
 		display: grid;
-    grid-template-rows: auto 1fr auto;
+    grid-template-rows: auto auto 1fr auto;
 	}
 	main {
 		padding-left: 15px;
