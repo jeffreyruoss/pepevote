@@ -12,7 +12,7 @@ interface Asset {
 
 /** @type {import('./$types').RequestHandler} */
 export async function POST({ cookies, request }) {
-	try {		
+	try {
 		const { address, message, random } = await request.json();
 
 		const verified = new Message(random).verify(address, message);
