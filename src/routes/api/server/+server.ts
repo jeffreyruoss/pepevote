@@ -2,6 +2,7 @@ import { error, json } from '@sveltejs/kit';
 import pkg from 'bitcore-lib';
 import { DIRECTUS_TOKEN, JWT_SECRET, ASSET } from "$env/static/private";
 import jwt from 'jsonwebtoken';
+import * as Sentry from "@sentry/sveltekit";
 
 const { Message } = pkg;
 
@@ -17,6 +18,7 @@ export async function POST({ cookies, request }) {
 		const verified = new Message(random).verify(address, message);
 
 		if (!verified) {
+			Sentry.captureException('Wallet could not be validated');
 			throw error(400, 'Wallet could not be validated');
 		}
 
@@ -25,7 +27,8 @@ export async function POST({ cookies, request }) {
 		const containsAsset = data.map((a: Asset) => a.asset).includes(ASSET);
 
 		if (!containsAsset) {
-			throw error(400, `Wallet does not contain ${ASSET}`);
+			Sentry.captureException(`Wallet does not contain ${ASSET}`);
+			throw error(401, `Wallet does not contain ${ASSET}`);
 		}
 
 		const assets = data.map((asset: Asset) => asset.asset)
@@ -43,8 +46,10 @@ export async function POST({ cookies, request }) {
 	} catch (e: any) {
 		// This is to accommodate the errors passed from the message verification
 		if (e.message) {
+			Sentry.captureException(e.message);
 			throw error(400, e.message);
 		}
+		Sentry.captureException(e.body.message);
 		throw error(e.status, e.body.message);
 	}
 
@@ -56,13 +61,15 @@ export async function GET({ cookies }) {
 		const token: string | undefined = cookies.get('token');
 
 		if (!token) {
-			throw error(400, 'No token available');
+			Sentry.captureException('No token located on request body');
+			throw error(400, 'No token located on request body');
 		}
 
 		const decoded: any = jwt.verify(token, JWT_SECRET);
 
 		if (!decoded.assets.includes(ASSET)) {
-			throw error(400, 'Wallet doesnt contain asset')
+			Sentry.captureException(`Wallet does not contain ${ASSET}`);
+			throw error(401, `Wallet does not contain ${ASSET}`);
 		}
 
 		return await fetch('https://data.rarepepes.com/items/candidates', {
@@ -74,8 +81,10 @@ export async function GET({ cookies }) {
 		})
 	} catch (e: any) {
 		if (e.message) {
+			Sentry.captureException(e.message);
 			throw error(400, e.message);
 		}
+		Sentry.captureException(e.body.message);
 		throw error(e.status, e.body.message);
 	}
 }

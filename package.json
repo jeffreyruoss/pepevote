@@ -31,6 +31,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@sentry/sveltekit": "^7.62.0",
 		"bitcore-lib": "^10.0.5",
 		"jsonwebtoken": "^9.0.1",
 		"lottie-web": "^5.12.2"
