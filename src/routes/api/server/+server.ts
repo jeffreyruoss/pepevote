@@ -29,7 +29,6 @@ export async function POST({ cookies, request }) {
 		const containsAsset2 = data.map((a: Asset) => a.asset).includes(ASSET2);
 
 		if (!containsAsset1 && !containsAsset2) {
-			console.log('here');
 			Sentry.captureException(`Wallet does not contain ${ASSET1} or ${ASSET2}`);
 			throw error(401, `Wallet does not contain ${ASSET1} or ${ASSET2}`);
 		}
