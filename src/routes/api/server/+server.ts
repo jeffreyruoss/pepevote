@@ -10,6 +10,12 @@ interface Asset {
 	asset: string
 }
 
+// how many to get per page // int or "" for all
+let limit = ""; 
+
+// Max pages just in case // int
+let totalPages = 20;
+
 /** @type {import('./$types').RequestHandler} */
 export async function POST({ cookies, request }) {
 	try {
@@ -22,11 +28,15 @@ export async function POST({ cookies, request }) {
 			throw error(400, `Address:${address} could not be validated`);
 		}
 
-		const response: any = await fetch(`https://xchain.io/api/balances/${address}`);
-		const { data } = await response.json();
+		const collectedAssetNames = await collect(address);
 
-		const containsAsset1 = data.map((a: Asset) => a.asset).includes(ASSET1);
-		const containsAsset2 = data.map((a: Asset) => a.asset).includes(ASSET2);
+		let containsAsset1 = false;
+		let containsAsset2 = false;
+		
+		if (Array.isArray(collectedAssetNames)) {
+				containsAsset1 = collectedAssetNames.includes(ASSET1);
+				containsAsset2 = collectedAssetNames.includes(ASSET2);
+		}		
 
 		if (!containsAsset1 && !containsAsset2) {
 			Sentry.captureException(`Wallet does not contain ${ASSET1} or ${ASSET2}`);
@@ -89,4 +99,40 @@ export async function GET({ cookies }) {
 		Sentry.captureException(e.body.message);
 		throw error(e.status, e.body.message);
 	}
+}
+
+async function collect(walletAddress: string) {
+	let currentPage = 1;
+	const assetNamesAll: string[] = [];
+
+  if (walletAddress === "") {
+    return json({error: "Wallet address is required to search for assets and valid"});
+  }
+
+  while (currentPage < totalPages + 1) {
+    const data = await getOnePage(walletAddress, currentPage);
+    const alletsDataFromPage = data.data;
+
+    // if alletsDataFromPage is empty, then we have reached the end of the pages. stop the loop
+    if (alletsDataFromPage.length === 0) {
+      break;
+    }
+
+    getAssetNameFromAsset(alletsDataFromPage, assetNamesAll);
+		currentPage++;
+  }
+
+  return assetNamesAll;
+}
+
+async function getOnePage(walletAddress: string, currentPage: number) {
+  const res = await fetch(`https://xchain.io/api/balances/${walletAddress}/${currentPage}/${limit}`);
+  const pageData = await res.json();
+  return pageData;
+}
+
+function getAssetNameFromAsset(alletsDataFromPage, assetNamesAll) {
+  return alletsDataFromPage.forEach((item) => {
+    assetNamesAll.push(item.asset);
+  });
 }
