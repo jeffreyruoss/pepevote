@@ -1,8 +1,9 @@
 import { error, json } from '@sveltejs/kit';
 import pkg from 'bitcore-lib';
-import { DIRECTUS_TOKEN, JWT_SECRET, ASSET1, ASSET2 } from "$env/static/private";
+import { DIRECTUS_TOKEN, JWT_SECRET, ASSETS } from "$env/static/private";
 import jwt from 'jsonwebtoken';
 import * as Sentry from "@sentry/sveltekit";
+import { collect } from '../../../lib/walletUtils';
 
 const { Message } = pkg;
 
@@ -10,16 +11,16 @@ interface Asset {
 	asset: string
 }
 
-// how many to get per page // int or "" for all
-let limit = ""; 
-
-// Max pages just in case // int
-let totalPages = 20;
+interface Request {
+	address: string,
+	message: string,
+	random: string
+}
 
 /** @type {import('./$types').RequestHandler} */
 export async function POST({ cookies, request }) {
 	try {
-		const { address, message, random } = await request.json();
+		const { address, message, random }: Request = await request.json();
 
 		const verified = new Message(random).verify(address, message);
 
@@ -30,29 +31,23 @@ export async function POST({ cookies, request }) {
 
 		const collectedAssetNames = await collect(address);
 
-		let containsAsset1 = false;
-		let containsAsset2 = false;
-		
 		if (Array.isArray(collectedAssetNames)) {
-				containsAsset1 = collectedAssetNames.includes(ASSET1);
-				containsAsset2 = collectedAssetNames.includes(ASSET2);
-		}		
+			const assets = collectedAssetNames.filter((asset) => ASSETS.includes(asset));
 
-		if (!containsAsset1 && !containsAsset2) {
-			Sentry.captureException(`Wallet does not contain ${ASSET1} or ${ASSET2}`);
-			throw error(401, `Wallet does not contain ${ASSET1} or ${ASSET2}`);
+			if (!assets.length) {
+				Sentry.captureException(`Wallet does not contain asset`);
+				throw error(401, `Wallet does not contain asset`);
+			}
+
+			const token = jwt.sign({ address, assets }, JWT_SECRET);
+
+			cookies.set('token', token, {
+				path: '/',
+				httpOnly: true,
+				sameSite: 'strict',
+				maxAge: 60 * 60 * 24 * 1000
+			});
 		}
-
-		const assets = [ASSET1, ASSET2];
-
-		const token = jwt.sign({ address, assets }, JWT_SECRET);
-
-		cookies.set('token', token, {
-			path: '/',
-			httpOnly: true,
-			sameSite: 'strict',
-			maxAge: 60 * 60 * 24 * 1000
-		});
 
 		return new Response()
 	} catch (e: any) {
@@ -79,9 +74,9 @@ export async function GET({ cookies }) {
 
 		const decoded: any = jwt.verify(token, JWT_SECRET);
 
-		if (!decoded.assets.includes(ASSET1) && !decoded.assets.includes(ASSET2)) {
-			Sentry.captureException(`Wallet does not contain ${ASSET1} or ${ASSET2}`);
-			throw error(401, `Wallet does not contain ${ASSET1} or ${ASSET2}`);
+		if (!decoded.assets.filter((asset: string) => ASSETS.includes(asset)).length) {
+			Sentry.captureException(`Wallet does not contain asset`);
+			throw error(401, `Wallet does not contain asset`);
 		}
 
 		return await fetch('https://data.rarepepes.com/items/candidates', {
@@ -99,40 +94,4 @@ export async function GET({ cookies }) {
 		Sentry.captureException(e.body.message);
 		throw error(e.status, e.body.message);
 	}
-}
-
-async function collect(walletAddress: string) {
-	let currentPage = 1;
-	const assetNamesAll: string[] = [];
-
-  if (walletAddress === "") {
-    return json({error: "Wallet address is required to search for assets and valid"});
-  }
-
-  while (currentPage < totalPages + 1) {
-    const data = await getOnePage(walletAddress, currentPage);
-    const alletsDataFromPage = data.data;
-
-    // if alletsDataFromPage is empty, then we have reached the end of the pages. stop the loop
-    if (alletsDataFromPage.length === 0) {
-      break;
-    }
-
-    getAssetNameFromAsset(alletsDataFromPage, assetNamesAll);
-		currentPage++;
-  }
-
-  return assetNamesAll;
-}
-
-async function getOnePage(walletAddress: string, currentPage: number) {
-  const res = await fetch(`https://xchain.io/api/balances/${walletAddress}/${currentPage}/${limit}`);
-  const pageData = await res.json();
-  return pageData;
-}
-
-function getAssetNameFromAsset(alletsDataFromPage, assetNamesAll) {
-  return alletsDataFromPage.forEach((item) => {
-    assetNamesAll.push(item.asset);
-  });
 }
