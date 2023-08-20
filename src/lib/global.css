@@ -1,6 +1,9 @@
 input:focus {
 	box-shadow: 0 0 6px 3px #00af17;
 }
+textarea:focus {
+	box-shadow: 0 0 6px 3px #00af17;
+}
 button:focus {
 	box-shadow: 0 0 4px 1px #00af17a1;
 }

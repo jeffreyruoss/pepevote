@@ -11,7 +11,7 @@
 		const copy = messageInput.value;
 		navigator.clipboard.writeText(copy);
 		// @ts-ignore
-		document.getElementById('signature').focus();
+		document.getElementById('message').focus();
 		showCheckIcon = true;
 		const timeout = setTimeout(() => {
 			showCheckIcon = false;
