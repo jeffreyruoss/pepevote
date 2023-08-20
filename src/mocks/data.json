@@ -1,0 +1,14 @@
+{
+	"address": "14GRxZmNCLHo5Uknr2XYnGA61Hh9uMULXV",
+	"data": [{
+		"asset":"DANK",
+		"asset_longname":"",
+		"collections":["dank-directory","kaleidoscope"],
+		"description":"xcp.coindaddy.io\/DANK.json",
+		"estimated_value":{
+			"btc":"0.00000000",
+			"usd":"0.00",
+			"xcp":"0.00000000"
+		},"quantity":"0.00000005"}
+	]
+}

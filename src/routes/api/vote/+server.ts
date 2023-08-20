@@ -1,5 +1,5 @@
 import { error, json } from '@sveltejs/kit';
-import { DIRECTUS_TOKEN, JWT_SECRET, ASSET1, ASSET2 } from "$env/static/private";
+import { DIRECTUS_TOKEN, JWT_SECRET, ASSETS } from "$env/static/private";
 import jwt from 'jsonwebtoken';
 import * as Sentry from "@sentry/sveltekit";
 
@@ -17,9 +17,9 @@ export async function POST({ cookies, request }) {
 
 		const decoded: any = jwt.verify(token, JWT_SECRET);
 
-		if (!decoded.assets.includes(ASSET1) && !decoded.assets.includes(ASSET2)) {
-			Sentry.captureException(`Wallet does not contain ${ASSET1} or ${ASSET2}`);
-			throw error(401, `Wallet does not contain ${ASSET1} or ${ASSET2}`);
+		if (!decoded.assets.filter((asset: string) => ASSETS.includes(asset)).length) {
+			Sentry.captureException(`Wallet does not contain asset`);
+			throw error(401, `Wallet does not contain asset`);
 		}
 
 		await fetch('https://data.rarepepes.com/items/results', {
